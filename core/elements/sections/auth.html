@@ -11,7 +11,7 @@
                 'form' =>  '@FILE chunks/forms/loginForm.html',
                 'snippet' => 'FormIt',
                 'successMessage' => 'Вы успешно авторизованы и будете перенаправлены в личный кабинет.',
-                'validate' => '{'email:required,password:required,'~$validateDefault}'
+                'validate' => 'email:required,password:required,'~$validateDefault,
                 'validationErrorMessage' => 'Исправьте, пожалуйста, ошибки!',
                 'hooks' => 'AjaxIdentification',
 

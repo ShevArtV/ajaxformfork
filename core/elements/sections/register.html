@@ -29,8 +29,8 @@
                 'usergroups' => 2,
                 'activationResourceId' => 19,
 
-                'validate' => '{'email:required,username:userExists,fullname:required:minLength=^6^,password:required:minLength=^8^,
-                password_confirm:password_confirm=^password^,'~$validateDefault}'
+                'validate' => 'email:required,username:userExists,fullname:required:minLength=^6^,password:required:minLength=^8^,
+                password_confirm:password_confirm=^password^,'~$validateDefault,
                 'validationErrorMessage' => 'Исправьте, пожалуйста, ошибки!',
 
                 'phone.vTextRequired' => 'Укажите телефон.',

@@ -155,7 +155,7 @@ export default class AjaxForm {
                 el.removeEventListener('keydown', this.resetErrors);
             }
         });
-        if (this.config.clearFieldsOnSuccess) {
+        if (this.config.clearFieldsOnSuccess == true) {
             form.reset();
         }
 
