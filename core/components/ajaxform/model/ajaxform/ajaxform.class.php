@@ -73,11 +73,11 @@ class AjaxForm
      */
     public function loadJsCss($objectName = 'AjaxForm')
     {
-        if ($css = trim($this->config['frontend_css'])) {
-            if (preg_match('/\.css/i', $css)) {
-                $this->modx->regClientCSS(str_replace('[[+assetsUrl]]', $this->config['assetsUrl'], $css));
-            }
-        }
+        /* if ($css = trim($this->config['frontend_css'])) {
+             if (preg_match('/\.css/i', $css)) {
+                 $this->modx->regClientCSS(str_replace('[[+assetsUrl]]', $this->config['assetsUrl'], $css));
+             }
+         }*/
         if ($js = trim($this->config['frontend_js'])) {
             if (preg_match('/\.js/i', $js)) {
                 $scriptPath = str_replace('[[+assetsUrl]]', $this->config['assetsUrl'], $js);
@@ -171,12 +171,16 @@ class AjaxForm
                 : 'af_err_has_errors';
             $status = 'error';
         } else {
-            $message = isset($this->modx->placeholders[$plPrefix . 'successMessage'])
-                ? $this->modx->placeholders[$plPrefix . 'successMessage']
+            $message = isset($scriptProperties['successMessage'])
+                ? $scriptProperties['successMessage']
                 : 'af_success_submit';
             $status = 'success';
+            if($scriptProperties['redirectId']){
+                $redirectUrl = $this->modx->makeUrl($scriptProperties['redirectId'], '', '', 'full');
+                $errors['redirectUrl'] = $redirectUrl;
+                $errors['redirectTimeout'] = $scriptProperties['redirectTimeout'] ?: 2000;
+            }
         }
-
         return $this->$status($message, $errors);
     }
 

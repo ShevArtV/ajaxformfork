@@ -1,0 +1,31 @@
+<section class="contact-section spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                {set $secret = $_modx->config.secret}
+                {set $validateDefault = 'secret:contains=^'~$secret~'^'}
+                {'!AjaxForm' | snippet : [
+                'form' =>  '@FILE chunks/forms/forgotForm.html',
+                'snippet' => 'FormIt',
+                'hooks' => 'AjaxIdentification,FormItSaveForm,FormItAutoResponder',
+                'method' => 'forgot',
+                'successMessage' => 'Новый пароль отправлен на ваш email',
+                'customValidators' => 'userNotExists',
+                'formName' => 'Забыли пароль',
+
+                'usernameField' => 'email',
+                'validate' => '{'email:required:userNotExists,'~$validateDefault}'
+                'validationErrorMessage' => 'Исправьте, пожалуйста, ошибки!',
+
+                'fiarSubject' => 'Восстановление пароля',
+                'fiarFrom' => 'email@domain.ru',
+                'fiarTpl' => '@FILE chunks/emails/resetPassEmail.html',
+
+                'email.vTextRequired' => 'Укажите email.',
+                'email.vTextUserNotExists' => 'Пользователь не найден',
+                'secret.vTextContains' => 'Кажется Вы робот. Если это не так, обновите страницу.'
+                ]}
+            </div>
+        </div>
+    </div>
+</section>

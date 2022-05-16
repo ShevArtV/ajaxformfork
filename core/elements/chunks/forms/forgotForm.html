@@ -1,0 +1,19 @@
+<form action="#" class="contact-form jsRegisterForm">
+    <input type="text" name="secret" data-secret="{$_modx->config.secret}" style="position: absolute;opacity:0;width:1px;">
+    <input type="hidden" name="email" value="">
+    <div class="row">
+        <div class="text-center col-12">
+            <small class="d-block error_secret mb-3 text-danger"></small>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <input type="email" class="form-field" name="email" placeholder="Ваш email">
+            <small class="d-block error_email text-danger"></small>
+        </div>
+        <div class="col-lg-6">
+            <button type="submit">Получить пароль</button>
+        </div>
+        <div class="col-lg-6 d-flex justify-content-end align-items-center">
+            <a href="{*ссылка на страницу регистрации*}" class="cabinet-link">Нет аккаунта? Зарегистрируйтесь.</a>
+        </div>
+    </div>
+</form>

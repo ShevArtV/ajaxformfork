@@ -1,0 +1,38 @@
+<form action="#" class="contact-form jsRegisterForm">
+    <input type="text" name="secret" data-secret="{$_modx->config.secret}" style="position: absolute;opacity:0;width:1px;">
+    <div class="row">
+        <div class="text-center col-12">
+            <small class="d-block error_secret mb-3 text-danger"></small>
+            <small class="d-block error_username mb-3 text-danger"></small>
+        </div>
+        <div class="col-12 mb-3">
+            <input type="text" class="form-field" name="fullname" placeholder="Ваше ФИО">
+            <small class="d-block error_fullname text-danger"></small>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <input type="email" class="form-field" name="email" placeholder="Ваш email">
+            <small class="d-block error_email text-danger"></small>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <div class="position-relative mb-2">
+                <input type="password" class="form-field pr-30 mb-0" name="password" id="password" placeholder="Пароль">
+                <i class="fa fa-eye jsToggleType position-absolute" data-target="#password"></i>
+            </div>
+            <small class="d-block error_password text-danger"></small>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <div class="position-relative mb-2">
+                <input type="password" class="form-field pr-30 mb-0" name="password_confirm" id="password_confirm" placeholder="Подтвердите Пароль">
+                <i class="fa fa-eye jsToggleType position-absolute" data-target="#password_confirm"></i>
+            </div>
+            <small class="d-block error_password_confirm text-danger"></small>
+        </div>
+
+        <div class="col-lg-6">
+            <button type="submit">Отправить</button>
+        </div>
+        <div class="col-lg-6 d-flex justify-content-end align-items-center">
+            <a href="{*ссылка на страницу авторизации*}" class="cabinet-link">Уже есть аккаунт? Войдите.</a>
+        </div>
+    </div>
+</form>

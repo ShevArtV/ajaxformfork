@@ -1,0 +1,14 @@
+{set $secret = $_modx->config.secret}
+{set $validateDefault = 'secret:contains=^'~$secret~'^'}
+{'!AjaxForm' | snippet : [
+'form' =>  '@FILE chunks/forms/logoutForm.html',
+'snippet' => 'FormIt',
+'hooks' => 'AjaxIdentification',
+'method' => 'logout',
+'successMessage' => 'До новых встреч!',
+'redirectId' => 1,
+'validate' => $validateDefault,
+'validationErrorMessage' => '',
+
+'secret.vTextContains' => 'Кажется Вы робот. Если это не так, обновите страницу.'
+]}

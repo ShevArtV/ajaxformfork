@@ -1,0 +1,31 @@
+<section class="contact-section spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                {*защита от спама можно удалить и из валидатора тоже*}
+                {set $secret = $_modx->config.secret}
+                {set $validateDefault = 'secret:contains=^'~$secret~'^'}
+
+                {*Вызов формы для авторизации по email*}
+                {'!AjaxForm' | snippet : [
+                'form' =>  '@FILE chunks/forms/loginForm.html',
+                'snippet' => 'FormIt',
+                'successMessage' => 'Вы успешно авторизованы и будете перенаправлены в личный кабинет.',
+                'validate' => '{'email:required,password:required,'~$validateDefault}'
+                'validationErrorMessage' => 'Исправьте, пожалуйста, ошибки!',
+                'hooks' => 'AjaxIdentification',
+
+                'method' => 'login',
+
+                'redirectId' => 20,
+                'redirectTimeout' => 3000,
+                'usernameField' => 'email'
+
+                'email.vTextRequired' => 'Укажите email.',
+                'password.vTextRequired' => 'Введите пароль.',
+                'secret.vTextContains' => 'Кажется Вы робот. Если это не так, обновите страницу.'
+                ]}
+            </div>
+        </div>
+    </div>
+</section>

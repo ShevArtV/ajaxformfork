@@ -60,7 +60,7 @@ export default class AjaxForm {
         const elem = e.target || e,
             form = elem.closest('form');
         elem.classList.remove('error');
-        if (elem.name && form.length) {
+        if (elem.name && form.length && form.querySelector('.error_' + elem.name)) {
             form.querySelector('.error_' + elem.name).innerHTML = '';
         }
     }
@@ -111,6 +111,7 @@ export default class AjaxForm {
         request.addEventListener('readystatechange', function () {
             form.querySelectorAll('input,textarea,select,button').forEach(el => el.disabled = true);
             if (request.readyState === 4 && request.status === 200) {
+                console.log(request);
                 callback(request.response, request.response.success, request, form);
             } else if(request.readyState === 4 && request.status !== 200) {
                 if (this.notify !== undefined) {
@@ -157,6 +158,13 @@ export default class AjaxForm {
         if (this.config.clearFieldsOnSuccess) {
             form.reset();
         }
+
+        if(response.data.redirectUrl){
+            setTimeout(() =>{
+                window.location.href = response.data.redirectUrl;
+            },response.data.redirectTimeout);
+        }
+
         //noinspection JSUnresolvedVariable
         if (typeof grecaptcha !== 'undefined') {
             //noinspection JSUnresolvedVariable
