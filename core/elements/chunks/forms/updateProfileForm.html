@@ -1,0 +1,55 @@
+<form action="#" class="contact-form jsRegisterForm mb-5">
+    <input type="text" name="secret" data-secret="{$_modx->config.secret}" style="position: absolute;opacity:0;width:1px;">
+    <div class="row">
+        <div class="text-center col-12 mb-4">
+            <h4>Персональная информация</h4>
+        </div>
+        <div class="text-center col-12">
+            <small class="d-block error_secret mb-3 text-danger"></small>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <input type="text" class="form-field" name="fullname" placeholder="Ваше ФИО" value="{$_modx->user.fullname}">
+            <small class="d-block error_fullname text-danger"></small>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <input type="email" class="form-field" name="email" placeholder="Ваш email" value="{$_modx->user.email}">
+            <small class="d-block error_email text-danger"></small>
+        </div>
+        {set $extended = $_modx->user.extended}
+        <div class="text-center col-12 mb-4">
+            <h4>Платёжная информация</h4>
+        </div>
+        <div class="text-center col-12">
+            <small class="d-block error_secret mb-3 text-danger"></small>
+        </div>
+        <div class="col-lg-3 mb-3">
+            <input type="text" class="form-field" name="extended_bankname" placeholder="Название банка" value="{$extended.bankname}">
+            <small class="d-block error_extended_bankname text-danger"></small>
+        </div>
+        <div class="col-lg-3 mb-3">
+            <input type="text" class="form-field" name="extended_bankinn" placeholder="ИНН Банка" value="{$extended.bankinn}">
+            <small class="d-block error_extended_bankinn text-danger"></small>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <input type="text" class="form-field" name="extended_rs" placeholder="Расчётный счёт" value="{$extended.rs}">
+            <small class="d-block error_extended_rs text-danger"></small>
+        </div>
+
+        <div class="col-lg-3 mb-3">
+            <input type="text" class="form-field" name="extended_bankkpp" placeholder="КПП Банка" value="{$extended.bankkpp}">
+            <small class="d-block error_extended_bankkpp text-danger"></small>
+        </div>
+        <div class="col-lg-3 mb-3">
+            <input type="text" class="form-field" name="extended_bankogrn" placeholder="ОГРН Банка" value="{$extended.bankogrn}">
+            <small class="d-block error_extended_bankogrn text-danger"></small>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <input type="text" class="form-field" name="extended_ks" placeholder="Корреспондентский счёт" value="{$extended.ks}">
+            <small class="d-block error_extended_ks text-danger"></small>
+        </div>
+
+        <div class="col-lg-6">
+            <button type="submit">Сохранить</button>
+        </div>
+    </div>
+</form>

@@ -51,12 +51,14 @@ class AjaxIdentification
         }
 
         if($moderate){
-            $_POST['block'] = 1;
+            $_POST['blocked'] = 1;
         }
 
-        if ($_POST['extended']) {
+        $_POST['extended'] = $this->prepareExtended();
+
+        /*if ($_POST['extended']) {
             $_POST['extended'] = json_encode($_POST['extended']);
-        }
+        }*/
 
         $response = $this->modx->runProcessor('/security/user/create', $_POST);
         if ($response->isError()) {
@@ -86,45 +88,6 @@ class AjaxIdentification
         return true;
     }
 
-    /**
-     * @param  integer $activationResourceId
-     *
-     * @return string
-     */
-    public function getConfirmUrl($activationResourceId)
-    {
-        $confirmParams['lu'] = $this->base64url_encode($this->modx->user->get('username'));
-        $profile = $this->modx->user->getOne('Profile');
-        $extended = $profile->get('extended');
-        $extended['activate_before'] = time() + 60 * 60 * 3; // срок жизни ссылки на активацию
-        $profile->set('extended', $extended);
-        $profile->save();
-        return $this->modx->makeUrl($activationResourceId, '', $confirmParams, 'full');
-    }
-
-
-    /**
-     * Encodes a string for URL safe transmission
-     *
-     * @access public
-     * @param string $str
-     * @return string
-     */
-    public function base64url_encode($str) {
-        return rtrim(strtr(base64_encode($str), '+/', '-_'), '=');
-    }
-
-    /**
-     * Decodes an URL safe encoded string
-     *
-     * @access public
-     * @param string $str
-     * @return string
-     */
-    public static function base64url_decode($str) {
-        return base64_decode(str_pad(strtr($str, '-_', '+/'), strlen($str) % 4, '=', STR_PAD_RIGHT));
-    }
-
     public function login()
     {
         $contexts = $this->config['authenticateContexts'];
@@ -149,6 +112,20 @@ class AjaxIdentification
             $this->hook->addError('secret', '');
             $this->hook->hasErrors();
             $this->modx->placeholders[$this->config['placeholderPrefix'] . 'validation_error_message'] = $response->getMessage();
+        }
+        return true;
+    }
+
+    public function update(){
+        if($this->modx->user->isAuthenticated($this->modx->context->get('key'))){
+            $profile = $this->modx->user->getOne('Profile');
+            $_POST['extended'] = $this->prepareExtended();
+            $_POST['passwordnotifymethod'] = 's';
+            $updateData = array_merge($this->modx->user->toArray(), $profile->toArray(), $_POST);
+            $this->modx->user->fromArray($updateData);
+            $profile->fromArray($updateData);
+            $this->modx->user->save();
+            $profile->save();
         }
         return true;
     }
@@ -243,6 +220,56 @@ class AjaxIdentification
         }
 
         return $password;
+    }
+
+    public function prepareExtended(){
+        $extended = array();
+        $extendedFieldPrefix = $this->config['extendedFieldPrefix'] ?: 'extended_';
+
+        foreach($_POST as $k => $v){
+            if(strpos($k, $extendedFieldPrefix) !== false){
+                $extended[str_replace($extendedFieldPrefix,'',$k)] = $v;
+            }
+        }
+        return $extended;
+    }
+
+    /**
+     * @param  integer $activationResourceId
+     *
+     * @return string
+     */
+    public function getConfirmUrl($activationResourceId)
+    {
+        $confirmParams['lu'] = $this->base64url_encode($this->modx->user->get('username'));
+        $profile = $this->modx->user->getOne('Profile');
+        $extended = $profile->get('extended');
+        $extended['activate_before'] = time() + 60 * 60 * 3; // срок жизни ссылки на активацию
+        $profile->set('extended', $extended);
+        $profile->save();
+        return $this->modx->makeUrl($activationResourceId, '', $confirmParams, 'full');
+    }
+
+    /**
+     * Encodes a string for URL safe transmission
+     *
+     * @access public
+     * @param string $str
+     * @return string
+     */
+    public function base64url_encode($str) {
+        return rtrim(strtr(base64_encode($str), '+/', '-_'), '=');
+    }
+
+    /**
+     * Decodes an URL safe encoded string
+     *
+     * @access public
+     * @param string $str
+     * @return string
+     */
+    public static function base64url_decode($str) {
+        return base64_decode(str_pad(strtr($str, '-_', '+/'), strlen($str) % 4, '=', STR_PAD_RIGHT));
     }
 
 }

@@ -1,0 +1,44 @@
+<section class="contact-section spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 mx-auto">
+                {set $secret = $_modx->config.secret}
+                {set $validateDefault = 'secret:contains=^'~$secret~'^'}
+                ##'!AjaxForm' | snippet : [
+                'form' =>  '@FILE chunks/forms/updateProfileForm.html',
+                'snippet' => 'FormIt',
+                'hooks' => 'AjaxIdentification',
+                'method' => 'update',
+                'successMessage' => 'Данные сохранены.',
+                'customValidators' => 'checkCode',
+                'clearFieldsOnSuccess' => 0,
+
+                'validate' => '{'email:required:email,fullname:required:minLength=^6^,'~$validateDefault}'
+                'validationErrorMessage' => 'Исправьте, пожалуйста, ошибки!',
+                'email.vTextRequired' => 'Укажите email.',
+                'fullname.vTextRequired' => 'Укажите ФИО.',
+                'fullname.vTextMinLength' => 'Слишком короткое ФИО.',
+                'secret.vTextContains' => 'Кажется Вы робот. Если это не так, обновите страницу.'
+                ]}
+            </div>
+            <div class="col-lg-12 mx-auto">
+                {set $secret = $_modx->config.secret}
+                {set $validateDefault = 'secret:contains=^'~$secret~'^'}
+                ##'!AjaxForm' | snippet : [
+                'form' =>  '@FILE chunks/forms/updatePassForm.html',
+                'snippet' => 'FormIt',
+                'hooks' => 'AjaxIdentification',
+                'method' => 'update',
+                'successMessage' => 'Пароль изменён.',
+
+                'validate' => '{'password:required:minLength=^8^,password_confirm:password_confirm=^password^,'~$validateDefault}'
+                'validationErrorMessage' => 'Исправьте, пожалуйста, ошибки!',
+
+                'password.vTextRequired' => 'Придумайте пароль.',
+                'password.vTextMinLength' => 'Пароль должен быть не менее 8 символов.',
+                'secret.vTextContains' => 'Кажется Вы робот. Если это не так, обновите страницу.'
+                ]}
+            </div>
+        </div>
+    </div>
+</section>
