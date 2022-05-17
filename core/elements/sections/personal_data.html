@@ -22,8 +22,6 @@
                 ]}
             </div>
             <div class="col-lg-12 mx-auto">
-                {set $secret = $_modx->config.secret}
-                {set $validateDefault = 'secret:contains=^'~$secret~'^'}
                 ##'!AjaxForm' | snippet : [
                 'form' =>  '@FILE chunks/forms/updatePassForm.html',
                 'snippet' => 'FormIt',
@@ -31,10 +29,11 @@
                 'method' => 'update',
                 'successMessage' => 'Пароль изменён.',
 
-                'validate' => '{'password:required:minLength=^8^,password_confirm:password_confirm=^password^,'~$validateDefault}'
+                'validate' => '{'password:required:minLength=^8^:regexp=^/\A[\da-zA-Z!#\?&]*$/^,password_confirm:password_confirm=^password^,'~$validateDefault}'
                 'validationErrorMessage' => 'Исправьте, пожалуйста, ошибки!',
 
                 'password.vTextRequired' => 'Придумайте пароль.',
+                'password.vTextRegexp' => 'Пароль может содержать только цифры, латинские буквы и символы !,#,?,&',
                 'password.vTextMinLength' => 'Пароль должен быть не менее 8 символов.',
                 'secret.vTextContains' => 'Кажется Вы робот. Если это не так, обновите страницу.'
                 ]}

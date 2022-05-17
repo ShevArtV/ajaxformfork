@@ -26,7 +26,7 @@ class AjaxIdentification
         $usernameField = $this->config['usernameField'] ?: 'username';
         $activation = $this->config['activation'];
         $moderate = $this->config['moderate'];
-        $activationResourceId = $this->config['activationResourceId'];
+        $activationResourceId = $this->config['activationResourceId'] ?: 1;
         $userGroupsField = $this->config['usergroupsField'] ?: '';
         $this->modx->user = $this->modx->getObject('modUser',1);
         $userGroups = !empty($userGroupsField) && array_key_exists($userGroupsField, $_POST) ? $_POST[$userGroupsField] : explode(',',$this->config['usergroups']);
@@ -55,10 +55,6 @@ class AjaxIdentification
         }
 
         $_POST['extended'] = $this->prepareExtended();
-
-        /*if ($_POST['extended']) {
-            $_POST['extended'] = json_encode($_POST['extended']);
-        }*/
 
         $response = $this->modx->runProcessor('/security/user/create', $_POST);
         if ($response->isError()) {
@@ -97,7 +93,7 @@ class AjaxIdentification
         if (!$_POST[$usernameField] || !$_POST[$passwordField]) {
             return false;
         }
-        $this->modx->log(1, print_r($_POST,1));
+
         $c = array(
             'login_context' => $this->modx->context->key,
             'add_contexts' => $contexts,
@@ -120,7 +116,6 @@ class AjaxIdentification
         if($this->modx->user->isAuthenticated($this->modx->context->get('key'))){
             $profile = $this->modx->user->getOne('Profile');
             $_POST['extended'] = $this->prepareExtended();
-            $_POST['passwordnotifymethod'] = 's';
             $updateData = array_merge($this->modx->user->toArray(), $profile->toArray(), $_POST);
             $this->modx->user->fromArray($updateData);
             $profile->fromArray($updateData);
@@ -244,7 +239,7 @@ class AjaxIdentification
         $confirmParams['lu'] = $this->base64url_encode($this->modx->user->get('username'));
         $profile = $this->modx->user->getOne('Profile');
         $extended = $profile->get('extended');
-        $extended['activate_before'] = time() + 60 * 60 * 3; // срок жизни ссылки на активацию
+        $extended['activate_before'] = $this->config['activationUrlTime'] ?: time() + 60 * 60 * 3; // срок жизни ссылки на активацию
         $profile->set('extended', $extended);
         $profile->save();
         return $this->modx->makeUrl($activationResourceId, '', $confirmParams, 'full');

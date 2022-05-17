@@ -28,6 +28,8 @@
                 'redirectTimeout' => 3000,
                 'usergroups' => 2,
                 'activationResourceId' => 19,
+                'extendedFieldPrefix' => 'extended_',
+                'activationUrlTime' => 10800
 
                 'validate' => 'email:required,username:userExists,fullname:required:minLength=^6^,password:required:minLength=^8^,
                 password_confirm:password_confirm=^password^,'~$validateDefault,
