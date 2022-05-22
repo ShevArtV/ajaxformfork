@@ -4,15 +4,15 @@ class AjaxIdentification
 {
 
     /**
-     * @param Modx $modx A reference to the Modx instance
+     * @param modX $modx A reference to the Modx instance
      * @param array $config
-     * @param Object $hook
+     * @param object $hook
      */
-    function __construct(Modx &$modx, array $config = array(), &$hook)
+    function __construct(modX $modx, array $config = array(), object $hook)
     {
-        $this->modx =& $modx;
+        $this->modx = $modx;
         $this->config = $config;
-        $this->hook =& $hook;
+        $this->hook = $hook;
     }
 
 
