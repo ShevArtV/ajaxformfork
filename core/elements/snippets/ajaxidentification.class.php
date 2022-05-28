@@ -8,7 +8,7 @@ class AjaxIdentification
      * @param array $config
      * @param object $hook
      */
-    function __construct(modX $modx, array $config = array(), object $hook)
+    function __construct(modX $modx, object $hook, array $config = array())
     {
         $this->modx = $modx;
         $this->config = $config;

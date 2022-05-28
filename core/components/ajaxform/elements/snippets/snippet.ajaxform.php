@@ -10,6 +10,7 @@ $config['pageId'] = $modx->resource->id;
 $frontConfigFields = [
     'formSelector',
     'closeMessage',
+    'showUplodedProgress',
     'fileUplodedProgressMsg',
     'fileUplodedSuccessMsg',
     'fileUplodedErrorMsg',
@@ -19,8 +20,7 @@ $frontConfigFields = [
     'clearFieldsOnSuccess',
     'pageId'
 ];
-$assetsUrl = $modx->getOption('ajaxform_assets_url', $config,
-    $modx->getOption('assets_url') . 'components/ajaxform/');
+$assetsUrl = $modx->getOption('ajaxform_assets_url', $config, $modx->getOption('assets_url') . 'components/ajaxform/');
 $parsedConfig = str_replace('[[+assetsUrl]]',$assetsUrl, $config);
 $snippet = $modx->getOption('snippet', $config, 'FormIt', true);
 $tpl = $modx->getOption('form', $config, 'tpl.AjaxForm.example', true);
@@ -95,7 +95,10 @@ $action = !empty($_REQUEST['af_action'])
     : $hash;
 
 $AjaxForm->loadJsCss($objectName);
-$AjaxForm->process($action, $_REQUEST);
+
+if($_POST['af_action']){
+    $AjaxForm->process($action, $_REQUEST);
+}
 
 // Return chunk
 return $content;

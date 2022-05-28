@@ -83,6 +83,7 @@ export default class AjaxForm {
     beforeSubmit(form) {
         const currentErrors = form.querySelectorAll('.error');
         if (currentErrors.length) currentErrors.forEach(this.resetErrors);
+        form.querySelectorAll('button').forEach(el => el.disabled = true);
         return true;
     }
 
@@ -95,6 +96,7 @@ export default class AjaxForm {
         request.open('POST', url, true);
         request.setRequestHeader("X-Requested-With", "XMLHttpRequest");
         request.responseType = 'json';
+
 
         if (form.querySelector('input[type="file"]') && this.config.showUplodedProgress) {
             request.upload.onprogress = function (e) {
@@ -111,7 +113,7 @@ export default class AjaxForm {
         request.addEventListener('readystatechange', function () {
             form.querySelectorAll('input,textarea,select,button').forEach(el => el.disabled = true);
             if (request.readyState === 4 && request.status === 200) {
-                console.log(request);
+                form.querySelectorAll('button').forEach(el => el.disabled = false);
                 callback(request.response, request.response.success, request, form);
             } else if(request.readyState === 4 && request.status !== 200) {
                 if (this.notify !== undefined) {
@@ -155,6 +157,7 @@ export default class AjaxForm {
                 el.removeEventListener('keydown', this.resetErrors);
             }
         });
+
         if (this.config.clearFieldsOnSuccess == true) {
             form.reset();
         }
@@ -182,7 +185,7 @@ export default class AjaxForm {
             let key, value, focused;
             for (key in response.data) {
                 let span = form.querySelector('.error_' + key);
-                if (response.data.hasOwnProperty(key)) {
+                if (response.data.hasOwnProperty(key) && form.querySelector('[name="' + key + '"]')) {
                     if (!focused) {
                         form.querySelector('[name="' + key + '"]').focus();
                         focused = true;

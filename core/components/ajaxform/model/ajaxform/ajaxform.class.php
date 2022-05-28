@@ -175,12 +175,14 @@ class AjaxForm
                 ? $scriptProperties['successMessage']
                 : 'af_success_submit';
             $status = 'success';
-            if($scriptProperties['redirectId']){
-                $redirectUrl = $this->modx->makeUrl($scriptProperties['redirectId'], '', '', 'full');
+            $errors['redirectTimeout'] = $scriptProperties['redirectTimeout'] ?: 2000;
+            $errors['redirectUrl'] = $scriptProperties['redirectTo'];
+            if((int)$scriptProperties['redirectTo']){
+                $redirectUrl = $this->modx->makeUrl($scriptProperties['redirectTo'], '', '', 'full');
                 $errors['redirectUrl'] = $redirectUrl;
-                $errors['redirectTimeout'] = $scriptProperties['redirectTimeout'] ?: 2000;
             }
         }
+
         return $this->$status($message, $errors);
     }
 
