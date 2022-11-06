@@ -18,7 +18,8 @@ $frontConfigFields = [
     'message_handler',
     'message_handler_method',
     'clearFieldsOnSuccess',
-    'pageId'
+    'pageId',
+    'validatedCheckboxNames'
 ];
 $assetsUrl = $modx->getOption('ajaxform_assets_url', $config, $modx->getOption('assets_url') . 'components/ajaxform/');
 $parsedConfig = str_replace('[[+assetsUrl]]',$assetsUrl, $config);
@@ -74,6 +75,7 @@ if (preg_match('#<form.*?method=(?:"|\')(.*?)(?:"|\')#i', $content)) {
 // Add action for form processing
 $hash = md5(http_build_query($config));
 $action = '<input type="hidden" name="af_action" value="' . $hash . '" />';
+$secret = '<input type="text" name="secret" data-secret="'.$config['secret'].'" style="position: absolute;opacity:0;z-index: -1;width:0;" autocomplete="off">';
 $inputConfig = '<input type="hidden" name="af_config" value=\'' . str_replace('{', '{ ',json_encode($frontendConfig)) . '\' />';
 if ((stripos($content, '</form>') !== false)) {
     if (preg_match('#<input.*?name=(?:"|\')af_action(?:"|\').*?>#i', $content, $matches)) {
@@ -84,6 +86,7 @@ if ((stripos($content, '</form>') !== false)) {
     }
     $content = str_ireplace('</form>', "\n\t$action\n</form>", $content);
     $content = str_ireplace('</form>', "\n\t$inputConfig\n</form>", $content);
+    $content = str_ireplace('</form>', "\n\t$secret\n</form>", $content);
 }
 
 // Save settings to user`s session

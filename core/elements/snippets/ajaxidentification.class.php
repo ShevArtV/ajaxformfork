@@ -40,8 +40,13 @@ class AjaxIdentification
                 );
             }
         }
+        if(!$_POST[$passwordField]){
+            $_POST[$passwordField] = $this->generateCode('pass', 10);
+        }
         $_POST['passwordgenmethod'] = 'none';
         $_POST['specifiedpassword'] = $_POST[$passwordField];
+        $this->hook->setValue('password', $_POST[$passwordField]);
+        $this->hook->setValue('username', $_POST[$usernameField]);
         $_POST['confirmpassword'] = $_POST[$passwordField];
         $_POST['username'] = $_POST[$usernameField];
         $_POST['passwordnotifymethod'] = 's';
@@ -55,7 +60,8 @@ class AjaxIdentification
         }
 
         $_POST['extended'] = $this->prepareExtended();
-
+        $_POST['extended']['redirectUrl'] = $this->modx->makeUrl($this->config['redirectId'], '', '', 'full');
+        $_POST['extended']['redirectTimeout'] = $this->config['redirectTimeout'];
         $response = $this->modx->runProcessor('/security/user/create', $_POST);
         if ($response->isError()) {
             $errors = $response->response['errors'];
@@ -115,10 +121,16 @@ class AjaxIdentification
     public function update(){
         if($this->modx->user->isAuthenticated($this->modx->context->get('key'))){
             $profile = $this->modx->user->getOne('Profile');
-            $_POST['extended'] = $this->prepareExtended();
-            $updateData = array_merge($this->modx->user->toArray(), $profile->toArray(), $_POST);
-            $this->modx->user->fromArray($updateData);
-            $profile->fromArray($updateData);
+            $extended = $this->prepareExtended();
+            if(!empty($extended)){
+                $_POST['extended'] = $extended;
+            }
+            $userData = $this->modx->user->toArray();
+            unset($userData['password']);
+            unset($userData['cachepwd']);
+            $profileData = $profile->toArray();
+            $this->modx->user->fromArray(array_merge($userData, $_POST));
+            $profile->fromArray(array_merge($profileData, $_POST));
             $this->modx->user->save();
             $profile->save();
         }
@@ -239,7 +251,7 @@ class AjaxIdentification
         $confirmParams['lu'] = $this->base64url_encode($this->modx->user->get('username'));
         $profile = $this->modx->user->getOne('Profile');
         $extended = $profile->get('extended');
-        $extended['activate_before'] = $this->config['activationUrlTime'] ?: time() + 60 * 60 * 3; // срок жизни ссылки на активацию
+        $extended['activate_before'] = time() + $this->config['activationUrlTime'] ?: time() + 60 * 60 * 3; // срок жизни ссылки на активацию
         $profile->set('extended', $extended);
         $profile->save();
         return $this->modx->makeUrl($activationResourceId, '', $confirmParams, 'full');

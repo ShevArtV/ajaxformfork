@@ -60,7 +60,7 @@ export default class AjaxForm {
         const elem = e.target || e,
             form = elem.closest('form');
         elem.classList.remove('error');
-        if (elem.name && form.length && form.querySelector('.error_' + elem.name)) {
+        if (elem.name && form.length) {
             form.querySelector('.error_' + elem.name).innerHTML = '';
         }
     }
@@ -83,7 +83,6 @@ export default class AjaxForm {
     beforeSubmit(form) {
         const currentErrors = form.querySelectorAll('.error');
         if (currentErrors.length) currentErrors.forEach(this.resetErrors);
-        form.querySelectorAll('button').forEach(el => el.disabled = true);
         return true;
     }
 
@@ -96,7 +95,6 @@ export default class AjaxForm {
         request.open('POST', url, true);
         request.setRequestHeader("X-Requested-With", "XMLHttpRequest");
         request.responseType = 'json';
-
 
         if (form.querySelector('input[type="file"]') && this.config.showUplodedProgress) {
             request.upload.onprogress = function (e) {
@@ -113,7 +111,6 @@ export default class AjaxForm {
         request.addEventListener('readystatechange', function () {
             form.querySelectorAll('input,textarea,select,button').forEach(el => el.disabled = true);
             if (request.readyState === 4 && request.status === 200) {
-                form.querySelectorAll('button').forEach(el => el.disabled = false);
                 callback(request.response, request.response.success, request, form);
             } else if(request.readyState === 4 && request.status !== 200) {
                 if (this.notify !== undefined) {
@@ -152,22 +149,20 @@ export default class AjaxForm {
             this.notify.success(response.message);
         }
 
+        if(response.data.redirectUrl){
+            setTimeout(() => {
+                window.location.href = response.data.redirectUrl;
+            },response.data.redirectTimeout);
+        }
+
         form.querySelectorAll('.error').forEach(el => {
             if (el.name) {
                 el.removeEventListener('keydown', this.resetErrors);
             }
         });
-
-        if (this.config.clearFieldsOnSuccess == true) {
+        if (this.config.clearFieldsOnSuccess != 0) {
             form.reset();
         }
-
-        if(response.data.redirectUrl){
-            setTimeout(() =>{
-                window.location.href = response.data.redirectUrl;
-            },response.data.redirectTimeout);
-        }
-
         //noinspection JSUnresolvedVariable
         if (typeof grecaptcha !== 'undefined') {
             //noinspection JSUnresolvedVariable
@@ -184,20 +179,27 @@ export default class AjaxForm {
         if (response.data) {
             let key, value, focused;
             for (key in response.data) {
-                let span = form.querySelector('.error_' + key);
-                if (response.data.hasOwnProperty(key) && form.querySelector('[name="' + key + '"]')) {
-                    if (!focused) {
-                        form.querySelector('[name="' + key + '"]').focus();
-                        focused = true;
-                    }
-                    value = response.data[key];
-                    if (span) {
-                        span.innerHTML = value;
-                        span.classList.add('error');
-                    }
+                if(key !== 'secret'){
+                    let span = form.querySelector('.error_' + key);
+                    if (response.data.hasOwnProperty(key)) {
+                        if (!focused) {
+                            form.querySelector('[name="' + key + '"]').focus();
+                            focused = true;
+                        }
+                        value = response.data[key];
+                        if (span) {
+                            span.innerHTML = value;
+                            span.classList.add('error');
+                        }
 
-                    form.querySelector('[name="' + key + '"]').classList.add('error');
+                        form.querySelector('[name="' + key + '"]').classList.add('error');
+                    }
+                }else{
+                    if (this.notify !== undefined) {
+                        this.notify.error(response.data[key]);
+                    }
                 }
+
             }
 
             form.querySelectorAll('.error').forEach(el => {

@@ -153,7 +153,7 @@ class AjaxForm
         $errors = array();
         foreach ($scriptProperties['fields'] as $k => $v) {
             if (isset($this->modx->placeholders[$plPrefix . 'error.' . $k])) {
-                $errors[$k] = $this->modx->placeholders[$plPrefix . 'error.' . $k];
+                $errors[$k] = strip_tags($this->modx->placeholders[$plPrefix . 'error.' . $k]);
             }
         }
 
@@ -176,9 +176,9 @@ class AjaxForm
                 : 'af_success_submit';
             $status = 'success';
             $errors['redirectTimeout'] = $scriptProperties['redirectTimeout'] ?: 2000;
-            $errors['redirectUrl'] = $scriptProperties['redirectTo'];
-            if((int)$scriptProperties['redirectTo']){
-                $redirectUrl = $this->modx->makeUrl($scriptProperties['redirectTo'], '', '', 'full');
+            $errors['redirectUrl'] = $scriptProperties['redirectId'];
+            if((int)$scriptProperties['redirectId']){
+                $redirectUrl = $this->modx->makeUrl($scriptProperties['redirectId'], '', '', 'full');
                 $errors['redirectUrl'] = $redirectUrl;
             }
         }
