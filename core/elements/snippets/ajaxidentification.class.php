@@ -121,14 +121,14 @@ class AjaxIdentification
     public function update(){
         if($this->modx->user->isAuthenticated($this->modx->context->get('key'))){
             $profile = $this->modx->user->getOne('Profile');
-            $extended = $this->prepareExtended();
-            if(!empty($extended)){
-                $_POST['extended'] = $extended;
-            }
+            $profileData = $profile->toArray();
+            $extended = $this->prepareExtended() ?: array();
+            $_POST['extended'] = array_merge($profileData['extended'],$extended);
             $userData = $this->modx->user->toArray();
             unset($userData['password']);
             unset($userData['cachepwd']);
-            $profileData = $profile->toArray();
+
+            $this->modx->log(1, print_r($profileData,1));
             $this->modx->user->fromArray(array_merge($userData, $_POST));
             $profile->fromArray(array_merge($profileData, $_POST));
             $this->modx->user->save();
