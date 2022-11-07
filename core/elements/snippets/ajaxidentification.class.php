@@ -128,7 +128,6 @@ class AjaxIdentification
             unset($userData['password']);
             unset($userData['cachepwd']);
 
-            $this->modx->log(1, print_r($profileData,1));
             $this->modx->user->fromArray(array_merge($userData, $_POST));
             $profile->fromArray(array_merge($profileData, $_POST));
             $this->modx->user->save();
