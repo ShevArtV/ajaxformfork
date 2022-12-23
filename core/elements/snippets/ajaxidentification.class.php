@@ -119,19 +119,33 @@ class AjaxIdentification
     }
 
     public function update(){
+        if((int)$_POST['uid']){
+            $user = $this->modx->getObject('modUser', (int)$_POST['uid']);
+        }else{
+            $user = $this->modx->user;
+        }
+
         if($this->modx->user->isAuthenticated($this->modx->context->get('key'))){
-            $profile = $this->modx->user->getOne('Profile');
+            $profile = $user->getOne('Profile');
             $profileData = $profile->toArray();
             $extended = $this->prepareExtended() ?: array();
             $_POST['extended'] = array_merge($profileData['extended'],$extended);
-            $userData = $this->modx->user->toArray();
+            $_POST['dob'] = $_POST['dob'] ? strtotime($_POST['dob']) : $profile->get('dob');
+            $userData = $user->toArray();
             unset($userData['password']);
             unset($userData['cachepwd']);
 
-            $this->modx->user->fromArray(array_merge($userData, $_POST));
+            $user->fromArray(array_merge($userData, $_POST));
             $profile->fromArray(array_merge($profileData, $_POST));
-            $this->modx->user->save();
+            $user->save();
             $profile->save();
+
+            $this->modx->invokeEvent('aiOnUserUpdate',array(
+                'user' => $user,
+                'profile' => $profile,
+                'data' => $_POST
+            ));
+
         }
         return true;
     }

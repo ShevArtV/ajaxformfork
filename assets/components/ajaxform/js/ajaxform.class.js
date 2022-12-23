@@ -123,14 +123,14 @@ export default class AjaxForm {
 
     // handler server response
     responseHandler(response, status, xhr, form) {
+        form.querySelectorAll('input,textarea,select,button').forEach(el => el.disabled = false);
+
         const event = new CustomEvent('af_complete', {
             cancelable: true,
             bubbles: true,
             detail: {response: response, status: status, xhr: xhr, form: form},
         });
         const cancelled = document.dispatchEvent(event);
-
-        form.querySelectorAll('input,textarea,select,button').forEach(el => el.disabled = false);
 
         if (cancelled) {
             if (!status) {
